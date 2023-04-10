@@ -1,5 +1,7 @@
-import serial
 import time
+import logging
+
+# File imports
 import Connector
 
 
@@ -13,16 +15,19 @@ def main():
                 # Here you can add your logic to decide which command to send
                 # Example: forward for 2 seconds, then stop
                 con.forward()
-                time.sleep(2)
+                time.sleep(1)
                 con.backward()
-                time.sleep(2)
+                time.sleep(1)
+                con.read_data()
+                logging.debug(con.get_gyro_data())
 
         except KeyboardInterrupt:
-            print("Ah!")
+            logging.info("Keyboard interrupt received, stopping...")
             # Gracefully stop the motors on KeyboardInterrupt
             con.stop()
             con.close()
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG)
     main()
