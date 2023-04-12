@@ -19,7 +19,7 @@ def main():
                 con.backward()
                 time.sleep(1)
                 con.read_data()
-                logging.debug(con.get_gyro_data())
+                logging.debug(f"Gyro: {con.get_gyro_data()}")
 
         except KeyboardInterrupt:
             logging.info("Keyboard interrupt received, stopping...")

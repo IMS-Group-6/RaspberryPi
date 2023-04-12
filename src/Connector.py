@@ -16,7 +16,7 @@ class Connector:
         logging.info("Connecting to device")
         try:
             self.serialConnection = serial.Serial(
-                port='COM8',  # Replace with your serial port
+                port='/dev/ttyUSB0',  # Replace with your serial port
                 baudrate=115200,
                 timeout=1
             )
@@ -37,11 +37,13 @@ class Connector:
 
     def read_data(self):
         line = self.serialConnection.readline().decode("utf-8")
+        logging.debug(line)
 
-        values = line.split(",")
-        self.gyro["X"] = float(values[0][3:])
-        self.gyro["Y"] = float(values[1][3:])
-        self.gyro["Z"] = float(values[2][3:])
+        # values = line.split(",")
+        #
+        # self.gyro["X"] = float(values[0][3:])
+        # self.gyro["Y"] = float(values[1][3:])
+        # self.gyro["Z"] = float(values[2][3:])
 
     def get_gyro_data(self):
         return self.gyro
@@ -51,16 +53,16 @@ class Connector:
         time.sleep(0.2)
 
     def forward(self):
-        self.send_command("w\n")
+        self.send_command("w")
 
     def backward(self):
-        self.send_command("s\n")
+        self.send_command("s")
 
     def left(self):
-        self.send_command("a\n")
+        self.send_command("a")
 
     def right(self):
-        self.send_command("d\n")
+        self.send_command("d")
 
     def stop(self):
-        self.send_command("stop\n")
+        self.send_command("x")
