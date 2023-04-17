@@ -1,2 +1,3 @@
 # In terminal write pip install -r requirements.txt
 pyserial
+websocket-client
