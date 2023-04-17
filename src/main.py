@@ -3,11 +3,14 @@ import logging
 
 # File imports
 import Connector
+from websocket_client import WebSocketClient
 
 
 # Main program
 def main():
     con = Connector.Connector()
+    websocket_client = WebSocketClient()
+    websocket_client.start()
 
     if con.connected:
         try:
