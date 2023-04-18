@@ -1,17 +1,22 @@
 import time
 import logging
 
+
 # File imports
 import Connector
 from websocket_client import WebSocketClient
+from module.Camera import Camera
 
 
 # Main program
 def main():
     con = Connector.Connector()
+    
     websocket_client = WebSocketClient()
     websocket_client.start()
 
+    camera = Camera()
+    
     if con.connected:
         try:
             while True:
@@ -23,6 +28,10 @@ def main():
                 time.sleep(1)
                 con.read_data()
                 logging.debug(f"Gyro: {con.get_gyro_data()}")
+
+                camera.start_preview()
+                camera.capture("test-image.jpg")
+                camera.start_preview()
 
         except KeyboardInterrupt:
             logging.info("Keyboard interrupt received, stopping...")
