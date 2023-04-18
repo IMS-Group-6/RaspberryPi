@@ -1,32 +1,39 @@
 import time
 import logging
 
+
 # File imports
-import Connector
+#import Connector
 from module.Camera import Camera
 
 # Main program
 def main():
-    con = Connector.Connector()
+    #con = Connector.Connector()
     camera = Camera()
 
-    if con.connected:
-        try:
-            while True:
-                # Here you can add your logic to decide which command to send
-                # Example: forward for 2 seconds, then stop
-                con.forward()
-                time.sleep(1)
-                con.backward()
-                time.sleep(1)
-                con.read_data()
-                logging.debug(f"Gyro: {con.get_gyro_data()}")
+    camera.capture("King")
+    
+    # if con.connected:
+    #     try:
+    #         while True:
+    #             # Here you can add your logic to decide which command to send
+    #             # Example: forward for 2 seconds, then stop
+    #             con.forward()
+    #             time.sleep(1)
+    #             con.backward()
+    #             time.sleep(1)
+    #             con.read_data()
+    #             logging.debug(f"Gyro: {con.get_gyro_data()}")
 
-        except KeyboardInterrupt:
-            logging.info("Keyboard interrupt received, stopping...")
-            # Gracefully stop the motors on KeyboardInterrupt
-            con.stop()
-            con.close()
+    #             camera.start_preview()
+    #             camera.capture("test-image.jpg")
+    #             camera.start_preview()
+
+        # except KeyboardInterrupt:
+        #     logging.info("Keyboard interrupt received, stopping...")
+        #     # Gracefully stop the motors on KeyboardInterrupt
+        #     con.stop()
+        #     con.close()
 
 
 if __name__ == "__main__":
