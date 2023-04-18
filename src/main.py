@@ -4,13 +4,18 @@ import logging
 
 # File imports
 import Connector
+from websocket_client import WebSocketClient
 from module.Camera import Camera
+
 
 # Main program
 def main():
     con = Connector.Connector()
-    camera = Camera()
+    
+    websocket_client = WebSocketClient()
+    websocket_client.start()
 
+    camera = Camera()
     
     if con.connected:
         try:
