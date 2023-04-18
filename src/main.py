@@ -3,11 +3,12 @@ import logging
 
 # File imports
 import Connector
-
+from module.Camera import Camera
 
 # Main program
 def main():
     con = Connector.Connector()
+    camera = Camera()
 
     if con.connected:
         try:
