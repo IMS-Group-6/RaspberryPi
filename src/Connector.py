@@ -36,8 +36,9 @@ class Connector:
         self.close()
 
     def read_data(self):
-        line = self.serialConnection.readline().decode("utf-8")
-        logging.debug(line)
+        line = self.serialConnection.readline().decode("utf-8").strip()
+        if line:
+            logging.debug(line)
 
         # values = line.split(",")
         #
@@ -66,3 +67,6 @@ class Connector:
 
     def stop(self):
         self.send_command("x")
+
+    def drive_autonomously(self):
+        self.send_command("t")

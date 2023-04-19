@@ -23,15 +23,15 @@ def main():
                 # Here you can add your logic to decide which command to send
                 # Example: forward for 2 seconds, then stop
                 con.forward()
-                time.sleep(1)
-                con.backward()
-                time.sleep(1)
+                # time.sleep(1)
+                # con.backward()
+                # time.sleep(1)
                 con.read_data()
-                logging.debug(f"Gyro: {con.get_gyro_data()}")
+                # logging.debug(f"Gyro: {con.get_gyro_data()}")
 
-                camera.start_preview()
-                camera.capture("test-image.jpg")
-                camera.start_preview()
+                # camera.start_preview()
+                # camera.capture("test-image.jpg")
+                # camera.start_preview()
 
         except KeyboardInterrupt:
             logging.info("Keyboard interrupt received, stopping...")
