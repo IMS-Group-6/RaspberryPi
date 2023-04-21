@@ -69,7 +69,7 @@ class SocketIOClient:
     
     # We can send mower position every second or so through socket or rest api 
     # (and requirements), up to you to decide. Maybe ask the supervisor next week?
-    async def send_position_update(self, mowing_session_id, x, y):
+    async def send_mower_position(self, mowing_session_id, x, y):
         data = {
             "type": "MOWER_POSITION",
             "data": {
@@ -85,7 +85,7 @@ async def main():
     client = SocketIOClient('http://localhost:8080')
     await client.connect()
 
-    await client.send_position_update("abc123", 10, 20) 
+    await client.send_mower_position("abc123", 10, 20) 
 
     await asyncio.Event().wait()
 
