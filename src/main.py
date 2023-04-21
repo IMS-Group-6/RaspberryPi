@@ -4,19 +4,21 @@ import logging
 
 # File imports
 import Connector
-from websocket_client import WebSocketClient
+from connections.socket_client import SocketIOClient
 from module.Camera import Camera
 
 
 # Main program
 def main():
     con = Connector.Connector()
-    
-    websocket_client = WebSocketClient()
-    websocket_client.start()
+
+    websocket_client = SocketIOClient(
+        'http://localhost:3000', con)  # Test server URL
+
+    # websocket_client = SocketIOClient('http://localhost:8080', con)  # Real server
 
     camera = Camera()
-    
+
     if con.connected:
         try:
             while True:
