@@ -77,7 +77,7 @@ class SocketIOClient:
                 print(f"Received direction: {direction}")
 
                 if direction == 'forward':
-                    self.connector.forwar()
+                    self.connector.forward()
                 elif direction == 'backward':
                     self.connector.backward()
                 elif direction == 'left':
