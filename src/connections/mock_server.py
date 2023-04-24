@@ -1,9 +1,9 @@
 import asyncio
 import socketio
 '''''''''
-This test server listens for incoming connections, and when a client connects, it stores its SID(session ID). 
-You can send hard-coded commands to the connected client by typing them in the terminal(e.g., forward, backward, left, right). 
-The server will send the command as a MOWER_COMMAND event to the connected client.
+1. connect: When a client connects to the server, this handler is triggered, and the server prints the client's session ID.
+2. disconnect: When a client disconnects from the server, this handler is triggered, and the server prints the client's session ID.
+3. message: When a message is received from a client, this handler is triggered. The server prints the received message and sends a hardcoded command back to the client using the sio.emit() function.
 '''''''''
 sio = socketio.AsyncServer(async_mode='asgi')
 app = socketio.ASGIApp(sio)

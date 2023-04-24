@@ -3,3 +3,6 @@ pyserial
 websocket-client
 python-socketio[asyncio_client]
 uvicorn
+uvicorn[standard]
+websockets
+wsproto

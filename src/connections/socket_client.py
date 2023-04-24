@@ -7,8 +7,8 @@ import aiohttp
 class SocketIOClient:
     def __init__(self, server_url, connector):
         self.connector = connector
-        connector = aiohttp.TCPConnector(ssl=False)
-        http_session = aiohttp.ClientSession(connector=connector)
+        tcp_connector = aiohttp.TCPConnector(ssl=False)
+        http_session = aiohttp.ClientSession(connector=tcp_connector)
 
         self.sio = socketio.AsyncClient(
             reconnection=True,
