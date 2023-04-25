@@ -6,61 +6,32 @@ import json
 
 # File imports
 import Connector
-from connections.socket_client import SocketIOClient
-from module.Camera import Camera
+from websocket_client import WebSocketClient
+#from module.Camera import Camera
 
 
-# Main program
-async def main():
+def main():
     con = Connector.Connector()
-    message_queue = asyncio.Queue()
-    websocket_client = SocketIOClient(
-        'http://localhost:3000', message_queue)  # Test server URL
 
-   # websocket_client = SocketIOClient('http://localhost:8080', con)  # Real server
+    websocket_client = WebSocketClient(con)
+    websocket_client.start()
 
-    await websocket_client.emit({"type": "TEST_MESSAGE", "data": "Hello, server"})
-
-    camera = Camera()
+   # camera = Camera()
 
     if con.connected:
         try:
             while True:
-                try:
-                    raw_data = await asyncio.wait_for(message_queue.get(), timeout=5)
-                    print(f"Message retrieved from queue: {raw_data}")
-                except asyncio.TimeoutError:
-                    print("No messages received for 5 seconds")
-                data = json.loads(raw_data)
-                print(data)
-                try:
-                    if data['type'] == 'DRIVING_MODE':
-                        mode = data['data']['mode']
-                        print(f"Driving mode: {mode}")
+                data = con.read_data()
 
-                    elif data['type'] == 'MOWER_COMMAND':
-                        direction = data['data']['direction']
-                        print(f"Received direction: {direction}")
-
-                        if direction == 'forward':
-                            con.forward()
-                            asyncio.sleep(100)
-                        elif direction == 'backward':
-                            con.backward()
-                        elif direction == 'left':
-                            print('Turn left')
-                            con.left()
-                        elif direction == 'right':
-                            con.right()
-                except Exception as e:
-                    print('Error: ', e)
+                if data == "CAPTURE":
+                    print('Object detected! Capturing Image...')
+                    #camera.capture("test-image.jpg")
 
         except KeyboardInterrupt:
             logging.info("Keyboard interrupt received, stopping...")
             # Gracefully stop the motors on KeyboardInterrupt
             con.stop()
             con.close()
-
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)

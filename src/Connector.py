@@ -36,14 +36,13 @@ class Connector:
         self.close()
 
     def read_data(self):
-        line = self.serialConnection.readline().decode("utf-8")
-        logging.debug(line)
-
-        # values = line.split(",")
-        #
-        # self.gyro["X"] = float(values[0][3:])
-        # self.gyro["Y"] = float(values[1][3:])
-        # self.gyro["Z"] = float(values[2][3:])
+        line = self.serialConnection.readline().decode("utf-8").strip()
+        if line:
+            logging.debug(line)
+        return line
+    
+    def write_data(self, data):
+        self.serialConnection.write(data.encode('utf-8'))
 
     def get_gyro_data(self):
         return self.gyro
@@ -67,3 +66,6 @@ class Connector:
 
     def stop(self):
         self.send_command("x")
+
+    def drive_autonomously(self):
+        self.send_command("t")
