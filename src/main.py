@@ -8,6 +8,8 @@ from websocket_client import WebSocketClient
 from module.Camera import Camera
 
 
+
+
 # Main program
 def main():
     con = Connector.Connector()
@@ -20,14 +22,14 @@ def main():
     if con.connected:
         try:
             while True:
-                # Here you can add your logic to decide which command to send
-                # Example: forward for 2 seconds, then stop
                 con.forward()
-                # time.sleep(1)
-                # con.backward()
-                # time.sleep(1)
-                con.read_data()
-                # logging.debug(f"Gyro: {con.get_gyro_data()}")
+  
+                data = con.read_data()
+
+                if data == "CAPTURE":
+                    print('Object detected! Capturing Image...')
+
+                    camera.capture("test-image.jpg")
 
                 # camera.start_preview()
                 # camera.capture("test-image.jpg")
