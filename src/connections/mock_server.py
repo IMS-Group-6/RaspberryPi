@@ -24,7 +24,7 @@ async def message(sid, data):
     print(f"Received message from {sid}: {data}")
 
     # Example of sending a hardcoded command to the client
-    await sio.emit('message', '{"type": "MOWER_COMMAND", "data": {"direction": "left"}}', to=sid)
+    await sio.emit('message', '{"type": "MOWER_COMMAND", "data": {"direction": "forward"}}', to=sid)
 
 if __name__ == '__main__':
     import uvicorn
