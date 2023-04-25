@@ -37,25 +37,3 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     asyncio.run(main())
 
-    """
-        This function handles all types of events.
-        At the moment these are the events that can be received:
-
-        - DRIVING_MODE (manual or auto)
-            - example:
-                {
-                    "type": "DRIVING_MODE",
-                    "data": {
-                        "mode": "auto"
-                    }
-                }
-
-        - MOWER_COMMAND (forward, backward, left or right)
-            - example:
-                {
-                    "type": "MOWER_COMMAND",
-                    "data": {
-                        "direction": "left"
-                    }
-                }
-    """
