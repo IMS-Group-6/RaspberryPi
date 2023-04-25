@@ -1,6 +1,7 @@
 import time
 from picamera import PiCamera
 
+
 class Camera:
     def __init__(self, resolution=(1024, 768)):
         self.camera = PiCamera()
@@ -15,4 +16,3 @@ class Camera:
     def capture(self, filename):
         time.sleep(2)
         self.camera.capture(filename)
-

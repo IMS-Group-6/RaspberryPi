@@ -1,31 +1,35 @@
 import time
 import logging
-
+import asyncio
 
 # File imports
 import Connector
-from websocket_client import WebSocketClient
+from connections.socket_client import SocketIOClient
 from module.Camera import Camera
 
 
 # Main program
-def main():
+async def main():
     con = Connector.Connector()
-    
-    websocket_client = WebSocketClient()
-    websocket_client.start()
+
+    websocket_client = SocketIOClient(
+        'http://localhost:3000', con)  # Test server URL
+
+    # websocket_client = SocketIOClient('http://localhost:8080', con)  # Real server
+
+    await websocket_client.connect()
 
     camera = Camera()
-    
+
     if con.connected:
         try:
             while True:
                 # Here you can add your logic to decide which command to send
                 # Example: forward for 2 seconds, then stop
                 con.forward()
-                time.sleep(1)
+                await asyncio.sleep(1)
                 con.backward()
-                time.sleep(1)
+                await asyncio.sleep(1)
                 con.read_data()
                 logging.debug(f"Gyro: {con.get_gyro_data()}")
 
@@ -42,4 +46,4 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    main()
+    asyncio.run(main())
