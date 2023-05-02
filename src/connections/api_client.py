@@ -115,8 +115,8 @@ class APIClient:
         Sends a POST request to the "/coordinates/obstacles" endpoint to post the coordinates and image of an obstacle.
 
         Args:
-        - x: A float representing the x-coordinate of the obstacle.
-        - y: A float representing the y-coordinate of the obstacle.
+        - x: An int representing the x-coordinate of the obstacle.
+        - y: An int representing the y-coordinate of the obstacle.
         - image: A string representing the filename (including path) of the obstacle image.
 
         Returns:
