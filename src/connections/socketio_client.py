@@ -15,9 +15,9 @@ class SocketIOClient:
         self.server_url = server_url
 
         # Event Listeners
+        # "message" event is handled in the command file
         self.sio.on('connect', self._register_as_mower)
         self.sio.on('reconnect', self._register_as_mower)
-        self.sio.on('message', self.on_message)
 
     async def connect(self):
         """
@@ -31,7 +31,7 @@ class SocketIOClient:
         """
         await self.sio.connect(self.server_url)
 
-    async def _emit(self, data):
+    async def emit(self, data):
         """
         Emits a Socket.IO event with the specified data.
 
@@ -59,21 +59,4 @@ class SocketIOClient:
                 "role": "mower"
             }
         }
-        await self._emit(data)
-
-    async def on_message(self, raw_data):
-        """
-        Event listener that is triggered when a "message" event is received from the Socket.IO server.
-
-        Args:
-        - raw_data: A string representing the raw data received from the server.
-
-        Returns:
-        - The parsed JSON data received from the server.
-        """
-        print(f"Received message: {raw_data}")
-        try:
-            data = json.loads(raw_data)
-            return data
-        except Exception as e:
-            print("Error: ", e)
+        await self.emit(data)
