@@ -1,27 +1,25 @@
-import time
 import logging
 import asyncio
-import json
-
 
 # File imports
-import Connector
-from websocket_client import WebSocketClient
 from module.Camera import Camera
+from connections.api_client import APIClient
+from connections.connector import Connector
+from command_handler import CommandHandler
 
+async def main():
+    con = Connector()
+    api_client = APIClient()
 
-def main():
-    con = Connector.Connector()
+    command_handler = CommandHandler(con)
+    await command_handler.listen()
 
-    websocket_client = WebSocketClient(con)
-    websocket_client.start()
-
-    # Camera object initialized here
     camera = Camera()
 
     if con.connected:
         try:
             while True:
+                # Should boundary and obstacle events be sent from here? 
                 data = con.read_data()
 
                 if data == "CAPTURE":
@@ -36,6 +34,7 @@ def main():
             con.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    asyncio.run(main())
+    logging.basicConfig(level=logging.ERROR)
 
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
