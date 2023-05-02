@@ -41,10 +41,8 @@ class CommandHandler:
             self._process_message(parsed_data)
         except json.JSONDecodeError as e:
             logging.error(f"Failed to parse message: {raw_data}")
-            return None
         except Exception as e:
             logging.error(e)
-            return None
     
     def _process_message(self, data):
         """
