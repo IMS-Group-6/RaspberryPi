@@ -1,8 +1,10 @@
 import requests
+import logging
+import config
 
 class APIClient:
-    def __init__(self, server_url):
-        self.server_url = server_url
+    def __init__(self):
+        self.server_url = config.SERVER_URL
     
     def ping(self):
         """
@@ -21,7 +23,7 @@ class APIClient:
 
             return response.status_code == 200
         except Exception as e:
-            print('Error: ', e)
+            logging.error(e)
             return False
     
     def start_mowing_session(self):
@@ -41,7 +43,7 @@ class APIClient:
 
             return response.status_code == 201
         except Exception as e:
-            print('Error: ', e)
+            logging.error(e)
             return False     
     
     def stop_mowing_session(self):
@@ -61,7 +63,7 @@ class APIClient:
 
             return response.status_code == 200
         except Exception as e:
-            print('Error: ', e)
+            logging.error(e)
             return False     
     
     def post_position(self, x, y):
@@ -84,7 +86,7 @@ class APIClient:
 
             return response.status_code == 201
         except Exception as e:
-            print("Error: ", e)
+            logging.error(e)
             return False
     
     def post_boundary(self, x, y):
@@ -107,7 +109,7 @@ class APIClient:
 
             return response.status_code == 201
         except Exception as e:
-            print("Error: ", e)
+            logging.error(e)
             return False
 
     def post_obstacle(self, x, y, image):
@@ -135,5 +137,5 @@ class APIClient:
 
             return response.status_code == 201
         except Exception as e:
-            print('Error: ', e)
+            logging.error(e)
             return False
