@@ -1,9 +1,10 @@
 import socketio
 import json
 import aiohttp
+import config
 
 class SocketIOClient:
-    def __init__(self, server_url):
+    def __init__(self):
         tcp_connector = aiohttp.TCPConnector(ssl=False)
         http_session = aiohttp.ClientSession(connector=tcp_connector)
 
@@ -12,7 +13,7 @@ class SocketIOClient:
             reconnection_delay=5,
             http_session=http_session
         )
-        self.server_url = server_url
+        self.server_url = config.SERVER_URL
 
         # Event Listeners
         # "message" event is handled in the command file

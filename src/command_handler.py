@@ -1,13 +1,11 @@
 from connections.socketio_client import SocketIOClient 
-from connections.connector import Connector
-import asyncio
 import json
 import logging
 
 class CommandHandler:
-    def __init__(self):
-        self.sio_client = SocketIOClient("http://localhost:8080")
-        self.connector = Connector()
+    def __init__(self, connector):
+        self.sio_client = SocketIOClient()
+        self.connector = connector # Instance of Connector
 
         self.auto_mode = True
 
@@ -36,6 +34,7 @@ class CommandHandler:
         Returns:
         - None
         """
+        print(raw_data)
         try:
             parsed_data = json.loads(raw_data)
             self._process_message(parsed_data)
@@ -59,7 +58,7 @@ class CommandHandler:
 
         if event_type == "DRIVING_MODE":
             self._proccess_driving_mode_event(event_data)
-        elif event_data == "MOWER_COMMAND":
+        elif event_type == "MOWER_COMMAND":
             self._proccess_mower_command_event(event_data)
         else:
             logging.info(f"Unrecognized event type: {event_type}")
@@ -114,11 +113,3 @@ class CommandHandler:
             self.connector.right()
         else:
             logging.info(f"Unrecognized direction: {event_data}")
-
-# This code should be in main or something
-async def main():
-    a = CommandHandler()
-    await a.listen()
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(main())
