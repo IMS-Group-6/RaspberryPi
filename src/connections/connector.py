@@ -2,7 +2,6 @@ import serial
 import time
 import logging
 
-
 class Connector:
     # Set up the serial port during Construction
     def __init__(self):
