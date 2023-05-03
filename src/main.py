@@ -7,11 +7,12 @@ from connections.api_client import APIClient
 from connections.connector import Connector
 from command_handler import CommandHandler
 
+
 async def main():
     con = Connector()
     api_client = APIClient()
 
-    command_handler = CommandHandler(con)
+    command_handler = CommandHandler(con, api_client)
     await command_handler.listen()
 
     camera = Camera()
@@ -19,7 +20,7 @@ async def main():
     if con.connected:
         try:
             while True:
-                # Should boundary and obstacle events be sent from here? 
+                # Should boundary and obstacle events be sent from here?
                 data = con.read_data()
 
                 if data == "CAPTURE":

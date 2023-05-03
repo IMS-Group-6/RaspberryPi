@@ -1,12 +1,15 @@
-from connections.socketio_client import SocketIOClient 
+from connections.socketio_client import SocketIOClient
 import json
 import logging
+import asyncio
+from functools import partial
+
 
 class CommandHandler:
-    def __init__(self, connector):
+    def __init__(self, connector, api_client):
         self.sio_client = SocketIOClient()
-        self.connector = connector # Instance of Connector
-
+        self.connector = connector  # Instance of Connector
+        self.api_client = api_client  # Add this line to store the api_client instance
         self.auto_mode = True
 
     async def listen(self):
@@ -23,7 +26,7 @@ class CommandHandler:
         self.sio_client.sio.on('message', self._handle_message)
         await self.sio_client.sio.wait()
         # or self.sio_client.sio.sleep() to not block main thread. But it will probably be used differently
-    
+
     def _handle_message(self, raw_data):
         """
         Parses a raw message received from the server and passes the resulting data to the process_message() function.
@@ -42,7 +45,7 @@ class CommandHandler:
             logging.error(f"Failed to parse message: {raw_data}")
         except Exception as e:
             logging.error(e)
-    
+
     def _process_message(self, data):
         """
         Processes a parsed message received from the server.
@@ -62,7 +65,7 @@ class CommandHandler:
             self._proccess_mower_command_event(event_data)
         else:
             logging.info(f"Unrecognized event type: {event_type}")
-    
+
     def _proccess_driving_mode_event(self, event_data):
         """
         Processes the "DRIVING_MODE" event received from the server and updates the 'self.auto_mode' attribute accordingly.
@@ -78,7 +81,7 @@ class CommandHandler:
         if driving_mode == "auto":
             if self.auto_mode:
                 return
-            
+
             self.auto_mode = True
             self.connector.drive_autonomously()
 
@@ -101,15 +104,51 @@ class CommandHandler:
         Returns:
         - None
         """
-        direction = event_data.get("direction")
-        
-        if direction == "forward":
+        action = event_data.get("action")
+
+        if action == "forward":
             self.connector.forward()
-        elif direction == "backward":
+        elif action == "backward":
             self.connector.backward()
-        elif direction == "left":
+        elif action == "left":
             self.connector.left()
-        elif direction == "right":
+        elif action == "right":
             self.connector.right()
+        elif action == "start":
+            asyncio.create_task(self.start_event())
+        elif action == "stop":
+            asyncio.create_task(self.stop_event())
+        elif action == "manual":
+            self.connector.manual()
         else:
             logging.info(f"Unrecognized direction: {event_data}")
+
+    async def start_event(self):  # New method
+        """
+        Handles a "start" event received from the server.
+
+        Args:
+        - None
+
+        Returns:
+        - None
+        """
+        self.connector.start()
+        # Inform the server about the start event
+        await self.sio_client.emit({"type": "STARTED"})
+        await self.api_client.start_mowing_session()
+
+    async def stop_event(self):  # New method
+        """
+        Handles a "stop" event received from the server.
+
+        Args:
+        - None
+
+        Returns:
+        - None
+        """
+        self.connector.stop()
+        # Inform the server about the stop event
+        await self.sio_client.emit({"type": "STOPPED"})
+        await self.api_client.stop_mowing_session()

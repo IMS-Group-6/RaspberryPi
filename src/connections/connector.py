@@ -2,6 +2,7 @@ import serial
 import time
 import logging
 
+
 class Connector:
     # Set up the serial port during Construction
     def __init__(self):
@@ -39,7 +40,7 @@ class Connector:
         if line:
             logging.debug(line)
         return line
-    
+
     def write_data(self, data):
         self.serialConnection.write(data.encode('utf-8'))
 
@@ -68,3 +69,9 @@ class Connector:
 
     def drive_autonomously(self):
         self.send_command("t")
+
+    def start(self):
+        self.send_command("z")
+
+    def manual(self):
+        self.send_command("m")
