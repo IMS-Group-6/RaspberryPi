@@ -1,31 +1,38 @@
+# Library imports
 import time
 import logging
 import asyncio
 import json
-
+from websocket_client import WebSocketClient
+from module.Camera import Camera
 
 # File imports
-import Connector
-from websocket_client import WebSocketClient
-#from module.Camera import Camera
+from connector import Connector
+from odometry import Odemetry
 
 
 def main():
-    con = Connector.Connector()
+    con = Connector()
+    odom = Odemetry()
 
     websocket_client = WebSocketClient(con)
     websocket_client.start()
 
-   # camera = Camera()
+    camera = Camera()
 
     if con.connected:
         try:
             while True:
                 data = con.read_data()
 
-                if data == "CAPTURE":
-                    print('Object detected! Capturing Image...')
-                    #camera.capture("test-image.jpg")
+                match data:
+                    case "CAPTURE":
+                        print('Object detected! Capturing Image...')
+                        camera.capture("test-image.jpg")
+                    case "ENCODER":
+                        odom.solve(con.l, con.r)
+                    case _:
+                        pass
 
         except KeyboardInterrupt:
             logging.info("Keyboard interrupt received, stopping...")
@@ -33,7 +40,8 @@ def main():
             con.stop()
             con.close()
 
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
-    asyncio.run(main())
+    main()
 

@@ -11,6 +11,10 @@ class Connector:
             "Y": 0.0,
             "Z": 0.0,
         }
+        self.lastPosL = 0
+        self.lastPosR = 0
+        self.l = 0
+        self.r = 0
 
         # Configure the serial port
         logging.info("Connecting to device")
@@ -39,7 +43,29 @@ class Connector:
         line = self.serialConnection.readline().decode("utf-8").strip()
         if line:
             logging.debug(line)
-        return line
+
+        match line.split(',')[0].strip():
+            case "CAPTURE":
+                return line
+            case "ENCODER":
+                self.parse_encoder(line)
+                return "ENCODER"
+            case "GYRO":
+                self.parse_gyro(line)
+                return "GYRO"
+            case _:
+                return line
+
+    def parse_encoder(self, line):
+        if line != ['']:
+            data = list(map(int, line))
+            self.l = data[1] - self.lastPosL
+            self.r = data[2] - self.lastPosR
+            self.lastPosL = data[1]
+            self.lastPosR = data[2]
+
+    def parse_gyro(self, line):
+        pass
     
     def write_data(self, data):
         self.serialConnection.write(data.encode('utf-8'))
