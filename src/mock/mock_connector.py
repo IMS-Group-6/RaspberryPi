@@ -31,6 +31,9 @@ class MockConnector:
 
     def right(self):
         self.send_command("right")
+    
+    def start(self):
+        self.send_command("start")
 
     def stop(self):
         self.send_command("stop")
@@ -38,8 +41,5 @@ class MockConnector:
     def drive_autonomously(self):
         self.send_command("auto")
 
-    def start(self):
-        self.send_command("start")
-
-    def manual(self):
-        self.send_command("stop")
+    def drive_manually(self):
+        self.send_command("manual")

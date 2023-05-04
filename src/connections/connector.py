@@ -67,6 +67,9 @@ class Connector:
 
     def right(self):
         self.send_command("d")
+    
+    def start(self):
+        self.send_command("z")
 
     def stop(self):
         self.send_command("x")
@@ -74,8 +77,5 @@ class Connector:
     def drive_autonomously(self):
         self.send_command("t")
 
-    def start(self):
-        self.send_command("z")
-
-    def manual(self):
+    def drive_manually(self):
         self.send_command("m")

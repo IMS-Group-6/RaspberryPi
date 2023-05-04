@@ -104,7 +104,7 @@ class CommandHandler:
                 return
             
             self.driving_mode = DrivingMode.MANUAL
-            self.connector.manual()
+            self.connector.drive_manually()
         else:
             logging.info(f"Unrecognized driving mode: {driving_mode}")
 
