@@ -14,21 +14,14 @@ def main():
     api_client = APIClient()
 
     if con.connected:
-        try:
-            while True:
-                # Should boundary and obstacle events be sent from here?
-                data = con.read_data()
+        while True:
+            # Should boundary and obstacle events be sent from here?
+            data = con.read_data()
 
-                if data == "CAPTURE":
-                    print('Object detected! Capturing Image...')
-                    # This is the function which will capture an image and store it to the local folder if nothing else is entered
-                    camera.capture("test-image.jpg")
-
-        except KeyboardInterrupt:
-            logging.info("Keyboard interrupt received, stopping...")
-            # Gracefully stop the motors on KeyboardInterrupt
-            con.stop()
-            con.close()
+            if data == "CAPTURE":
+                print('Object detected! Capturing Image...')
+                # This is the function which will capture an image and store it to the local folder if nothing else is entered
+                camera.capture("test-image.jpg")
 
 
 if __name__ == "__main__":
@@ -37,5 +30,12 @@ if __name__ == "__main__":
     t = threading.Thread(target=main)
     t.start()
     
-    command_handler = CommandHandler()
-    asyncio.run(command_handler.listen())
+    con = Connector() # Singleton
+    command_handler = CommandHandler(connector=con)
+    try:
+        asyncio.run(command_handler.listen())
+    except asyncio.exceptions.CancelledError:
+        logging.info("Keyboard interrupt received, stopping main thread (asyncio thread)...")
+        if (con.connected):
+            con.stop()
+            con.close()

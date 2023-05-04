@@ -14,10 +14,10 @@ class RunState(Enum):
     STOP = 2
 
 class CommandHandler:
-    def __init__(self):
+    def __init__(self, connector):
         self.sio_client = SocketIOClient()
         self.api_client = APIClient()
-        self.connector = Connector()
+        self.connector = connector
 
         # Keep track of different operations
         self.driving_mode = DrivingMode.AUTO
@@ -48,7 +48,7 @@ class CommandHandler:
         Returns:
         - None
         """
-        print(raw_data)
+        logging.debug(raw_data)
         try:
             parsed_data = json.loads(raw_data)
             self._process_message(parsed_data)
@@ -88,6 +88,7 @@ class CommandHandler:
         - None
         """
         driving_mode = event_data.get("mode")
+        logging.debug(f"driving_mode: {driving_mode}")
 
         if driving_mode == "auto":
             if self.driving_mode == DrivingMode.AUTO:
@@ -118,6 +119,7 @@ class CommandHandler:
         - None
         """
         action = event_data.get("action")
+        logging.debug(f"action: {action}")
 
         if (action in ("forward", "backward", "left", "right") and 
             (self.run_state != RunState.START or self.driving_mode != DrivingMode.MANUAL)):
