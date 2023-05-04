@@ -9,13 +9,14 @@ from command_handler import CommandHandler
 
 
 async def main():
+    # con = ""                        # For testing purpose
+    # camera = ""                     # For testing purpose
     con = Connector()
-    api_client = APIClient()
-
-    command_handler = CommandHandler(con, api_client)
-    await command_handler.listen()
-
     camera = Camera()
+    
+    api_client = APIClient()
+    command_handler = CommandHandler(con)
+    await command_handler.listen()
 
     if con.connected:
         try:
@@ -35,7 +36,7 @@ async def main():
             con.close()
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.ERROR)
+    logging.basicConfig(level=logging.DEBUG)
 
     loop = asyncio.get_event_loop()
     loop.run_until_complete(main())

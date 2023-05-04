@@ -1,16 +1,26 @@
 from connections.socketio_client import SocketIOClient
+from connections.api_client import APIClient
+from enum import Enum
 import json
 import logging
-import asyncio
-from functools import partial
 
+class DrivingMode(Enum):
+    AUTO = 1
+    MANUAL = 2
+
+class RunState(Enum):
+    START = 1
+    STOP = 2
 
 class CommandHandler:
-    def __init__(self, connector, api_client):
+    def __init__(self, connector):
         self.sio_client = SocketIOClient()
-        self.connector = connector  # Instance of Connector
-        self.api_client = api_client  # Add this line to store the api_client instance
-        self.auto_mode = True
+        self.api_client = APIClient()
+        self.connector = connector
+
+        # Keep track of different operations
+        self.driving_mode = DrivingMode.AUTO
+        self.run_state = RunState.STOP
 
     async def listen(self):
         """
@@ -79,20 +89,22 @@ class CommandHandler:
         driving_mode = event_data.get("mode")
 
         if driving_mode == "auto":
-            if self.auto_mode:
+            if self.driving_mode == DrivingMode.AUTO:
+                logging.debug("Driving mode is already AUTO")
                 return
-
-            self.auto_mode = True
+            
+            self.driving_mode = DrivingMode.AUTO
             self.connector.drive_autonomously()
 
         elif driving_mode == "manual":
-            if not self.auto_mode:
+            if self.driving_mode == DrivingMode.MANUAL:
+                logging.debug("Driving mode is already MANUAL")
                 return
-
-            self.auto_mode = False
-            # Couldnt find a command for manual mode
+            
+            self.driving_mode = DrivingMode.MANUAL
+            self.connector.manual()
         else:
-            logging.info(f"Unrecognized driving mode: {event_data}")
+            logging.info(f"Unrecognized driving mode: {driving_mode}")
 
     def _proccess_mower_command_event(self, event_data):
         """
@@ -106,6 +118,11 @@ class CommandHandler:
         """
         action = event_data.get("action")
 
+        if (action in ("forward", "backward", "left", "right") and 
+            (self.run_state != RunState.START or self.driving_mode != DrivingMode.MANUAL)):
+                logging.debug("Mower must be in START state and in MANUAL driving mode")
+                return
+        
         if action == "forward":
             self.connector.forward()
         elif action == "backward":
@@ -115,15 +132,13 @@ class CommandHandler:
         elif action == "right":
             self.connector.right()
         elif action == "start":
-            asyncio.create_task(self.start_event())
+            self._start_action()
         elif action == "stop":
-            asyncio.create_task(self.stop_event())
-        elif action == "manual":
-            self.connector.manual()
+            self._stop_action()
         else:
-            logging.info(f"Unrecognized direction: {event_data}")
+            logging.debug(f"Unrecognized action: {action}")
 
-    async def start_event(self):  # New method
+    def _start_action(self):
         """
         Handles a "start" event received from the server.
 
@@ -133,12 +148,17 @@ class CommandHandler:
         Returns:
         - None
         """
-        self.connector.start()
-        # Inform the server about the start event
-        await self.sio_client.emit({"type": "STARTED"})
-        await self.api_client.start_mowing_session()
+        if self.run_state == RunState.START:
+            logging.debug("Run state is already START")
+            return
 
-    async def stop_event(self):  # New method
+        if self.api_client.start_mowing_session():
+            self.run_state = RunState.START
+            self.connector.start()
+        else:
+            logging.error("Failed to start a mowing session")
+
+    def _stop_action(self):
         """
         Handles a "stop" event received from the server.
 
@@ -148,7 +168,13 @@ class CommandHandler:
         Returns:
         - None
         """
-        self.connector.stop()
-        # Inform the server about the stop event
-        await self.sio_client.emit({"type": "STOPPED"})
-        await self.api_client.stop_mowing_session()
+        if self.run_state == RunState.STOP:
+            logging.debug("Run state is already STOP")
+            return
+
+        if self.api_client.stop_mowing_session():
+            self.run_state = RunState.STOP
+            self.driving_mode = DrivingMode.AUTO
+            self.connector.stop()
+        else:
+            logging.error("Failed to stop a mowing session")
