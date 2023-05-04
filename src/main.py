@@ -9,13 +9,11 @@ from command_handler import CommandHandler
 
 
 async def main():
-    # con = ""                        # For testing purpose
-    # camera = ""                     # For testing purpose
     con = Connector()
     camera = Camera()
     
     api_client = APIClient()
-    command_handler = CommandHandler(con)
+    command_handler = CommandHandler()
     await command_handler.listen()
 
     if con.connected:

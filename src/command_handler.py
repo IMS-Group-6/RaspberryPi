@@ -1,5 +1,6 @@
 from connections.socketio_client import SocketIOClient
 from connections.api_client import APIClient
+from connections.connector import Connector
 from enum import Enum
 import json
 import logging
@@ -13,10 +14,10 @@ class RunState(Enum):
     STOP = 2
 
 class CommandHandler:
-    def __init__(self, connector):
+    def __init__(self):
         self.sio_client = SocketIOClient()
         self.api_client = APIClient()
-        self.connector = connector
+        self.connector = Connector()
 
         # Keep track of different operations
         self.driving_mode = DrivingMode.AUTO

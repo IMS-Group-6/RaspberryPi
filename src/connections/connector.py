@@ -2,18 +2,22 @@ import serial
 import time
 import logging
 
-
 class Connector:
-    # Set up the serial port during Construction
-    def __init__(self):
-        self.gyro = {
-            "X": 0.0,
-            "Y": 0.0,
-            "Z": 0.0,
-        }
+    _instance = None
+    gyro = {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0,
+    }
 
-        # Configure the serial port
-        logging.info("Connecting to device")
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance._configure_serial_connection()
+        return cls._instance
+
+    def _configure_serial_connection(self):
+        logging.info(f"{self.__class__.__name__}: Connecting to device")
         try:
             self.serialConnection = serial.Serial(
                 port='/dev/ttyUSB0',  # Replace with your serial port
@@ -21,11 +25,11 @@ class Connector:
                 timeout=1
             )
             self.connected = True
-            logging.info("Connection successful")
+            logging.info(f"{self.__class__.__name__}: Connection successful")
 
         except serial.SerialException:
             self.connected = False
-            logging.error("Connection unsuccessful")
+            logging.info(f"{self.__class__.__name__}: Connection unsuccessful")
 
     def close(self):
         if self.connected:
