@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import threading
 
 # File imports
 from module.Camera import Camera
@@ -7,14 +8,10 @@ from connections.api_client import APIClient
 from connections.connector import Connector
 from command_handler import CommandHandler
 
-
-async def main():
+def main():
     con = Connector()
     camera = Camera()
-    
     api_client = APIClient()
-    command_handler = CommandHandler()
-    await command_handler.listen()
 
     if con.connected:
         try:
@@ -33,8 +30,12 @@ async def main():
             con.stop()
             con.close()
 
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    t = threading.Thread(target=main)
+    t.start()
+    
+    command_handler = CommandHandler()
+    asyncio.run(command_handler.listen())

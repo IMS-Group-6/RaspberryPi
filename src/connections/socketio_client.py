@@ -2,16 +2,13 @@ import socketio
 import json
 import aiohttp
 import config
+import asyncio
 
 class SocketIOClient:
     def __init__(self):
-        tcp_connector = aiohttp.TCPConnector(ssl=False)
-        http_session = aiohttp.ClientSession(connector=tcp_connector)
-
         self.sio = socketio.AsyncClient(
             reconnection=True,
-            reconnection_delay=5,
-            http_session=http_session
+            reconnection_delay=5
         )
         self.server_url = config.SERVER_URL
 
@@ -30,7 +27,13 @@ class SocketIOClient:
         Returns:
         - None
         """
-        await self.sio.connect(self.server_url)
+        async def create_session_and_connect():
+            tcp_connector = aiohttp.TCPConnector(ssl=False)
+            async with aiohttp.ClientSession(connector=tcp_connector) as session:
+                self.sio.http_session = session
+                await self.sio.connect(self.server_url)
+
+        await asyncio.create_task(create_session_and_connect())
 
     async def emit(self, data):
         """
