@@ -35,7 +35,7 @@ if __name__ == "__main__":
     try:
         asyncio.run(command_handler.listen())
     except asyncio.exceptions.CancelledError:
-        logging.info("Keyboard interrupt received, stopping main thread (asyncio thread)...")
+        logging.info("Keyboard interrupt received, stopping...")
         if (con.connected):
             con.stop()
             con.close()
