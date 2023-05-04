@@ -27,7 +27,7 @@ def main():
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
-    t = threading.Thread(target=main)
+    t = threading.Thread(target=main, daemon=True)
     t.start()
     
     con = Connector() # Singleton
