@@ -1,15 +1,23 @@
+# Library imports
+import time
 import logging
 import asyncio
+import json
 import threading
-
-# File imports
+from websocket_client import WebSocketClient
 from module.Camera import Camera
 from connections.api_client import APIClient
 from connections.connector import Connector
 from command_handler import CommandHandler
 
+# File imports
+from connector import Connector
+from odometry import Odemetry
+
+
 def main():
     con = Connector()
+    odom = Odemetry()
     camera = Camera()
     api_client = APIClient()
 
@@ -18,10 +26,14 @@ def main():
             # Should boundary and obstacle events be sent from here?
             data = con.read_data()
 
-            if data == "CAPTURE":
-                print('Object detected! Capturing Image...')
-                # This is the function which will capture an image and store it to the local folder if nothing else is entered
-                camera.capture("test-image.jpg")
+                match data:
+                    case "CAPTURE":
+                        print('Object detected! Capturing Image...')
+                        camera.capture("test-image.jpg")
+                    case "ENCODER":
+                        odom.solve(con.l, con.r)
+                    case _:
+                        pass
 
 
 if __name__ == "__main__":
