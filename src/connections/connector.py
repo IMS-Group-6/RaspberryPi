@@ -56,25 +56,25 @@ class Connector:
         time.sleep(0.2)
 
     def forward(self):
-        self.send_command("forward")
+        self.send_command("f")
 
     def backward(self):
-        self.send_command("back")
+        self.send_command("b")
 
     def left(self):
-        self.send_command("left")
+        self.send_command("l")
 
     def right(self):
-        self.send_command("right")
+        self.send_command("r")
     
     def start(self):
-        self.send_command("start")
+        self.send_command("s")
 
     def stop(self):
-        self.send_command("stop")
+        self.send_command("t")
 
     def drive_autonomously(self):
-        self.send_command("auto")
+        self.send_command("a")
 
     def drive_manually(self):
-        self.send_command("manual")
+        self.send_command("m")
