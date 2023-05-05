@@ -3,44 +3,45 @@ import asyncio
 import threading
 
 # File imports
-from module.Camera import Camera
 from connections.api_client import APIClient
-from connections.connector import Connector
 from command_handler import CommandHandler
+from mock.mock_connector import MockConnector
+import config
 
 def main():
-    con = Connector()
-    camera = Camera()
     api_client = APIClient()
+    con = MockConnector()
 
     if con.connected:
-        while True:
-            # Should boundary and obstacle events be sent from here?
-            data = con.read_data()
+        print(f"Sending GET /ping to {config.SERVER_URL}")
 
-            if data == "CAPTURE":
-                print('Object detected! Capturing Image...')
-                # This is the function which will capture an image and store it to the local folder if nothing else is entered
-                camera.capture("test-image.jpg")
+        if api_client.ping():
+            print("Successful...")
+        else:
+            print("Failed...")
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    """
+    This script sets up a mock connection to test the code without access to hardware. 
 
+    Note that this test is still dependent on a backend connection, but it allows for testing the code in a 
+    controlled environment without the need for actual hardware. It focuses on testing the socket.io commands.
+    """
     t = threading.Thread(target=main, daemon=True)
     t.start()
-
-    api_client = APIClient() # Singleton
-    con = Connector() # Singleton
-    command_handler = CommandHandler(connector=con)
     
+    con = MockConnector()
+    api_client = APIClient()
+    command_handler = CommandHandler(connector=con)
+
     try:
         asyncio.run(command_handler.listen())
     except asyncio.exceptions.CancelledError:
         logging.info("Keyboard interrupt received, stopping...")
         if (con.connected):
             print("\n----")
-
+            
             # Stops an active session before program termination
             if api_client.stop_mowing_session():
                 print("Stopped an active session before program termination")
