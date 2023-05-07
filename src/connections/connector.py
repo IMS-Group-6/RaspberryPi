@@ -1,26 +1,14 @@
 import serial
 import time
 import logging
+from connections.base.base_connector import BaseConnector
 
-class Connector:
-    _instance = None
-    gyro = {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0,
-    }
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls)
-            cls._instance._configure_serial_connection()
-        return cls._instance
-
+class Connector(BaseConnector):
     def _configure_serial_connection(self):
         logging.info(f"{self.__class__.__name__}: Connecting to device")
         try:
             self.serialConnection = serial.Serial(
-                port='/dev/ttyUSB0',  # Replace with your serial port
+                port='/dev/ttyUSB0',
                 baudrate=115200,
                 timeout=1
             )
@@ -35,7 +23,6 @@ class Connector:
         if self.connected:
             self.serialConnection.close()
 
-    # Deconstruct
     def __del__(self):
         self.close()
 
@@ -52,7 +39,7 @@ class Connector:
         return self.gyro
 
     def send_command(self, cmd):
-        self.serialConnection.write(cmd.encode('utf-8'))
+        self.write_data(cmd)
         time.sleep(0.2)
 
     def forward(self):
@@ -63,7 +50,6 @@ class Connector:
 
     def left(self):
         self.send_command("a")
-        print('Left function')
 
     def right(self):
         self.send_command("d")
