@@ -1,6 +1,6 @@
 from connections.socketio_client import SocketIOClient
-from connections.api_client import APIClient
-from connections.connector import Connector
+from connections.base.base_api_client import BaseAPIClient
+from connections.base.base_connector import BaseConnector
 from enum import Enum
 import json
 import logging
@@ -14,10 +14,10 @@ class RunState(Enum):
     STOP = 2
 
 class CommandHandler:
-    def __init__(self, connector):
+    def __init__(self, api_client, connector):
         self.sio_client = SocketIOClient()
-        self.api_client = APIClient()
-        self.connector = connector
+        self.api_client: BaseAPIClient = api_client
+        self.connector: BaseConnector = connector
 
         # Keep track of different operations
         self.driving_mode = DrivingMode.AUTO
@@ -36,7 +36,6 @@ class CommandHandler:
         await self.sio_client.connect()
         self.sio_client.sio.on('message', self._handle_message)
         await self.sio_client.sio.wait()
-        # or self.sio_client.sio.sleep() to not block main thread. But it will probably be used differently
 
     def _handle_message(self, raw_data):
         """
@@ -155,11 +154,13 @@ class CommandHandler:
             logging.debug("Run state is already START")
             return
 
-        if self.api_client.start_mowing_session():
+        api_response = self.api_client.start_mowing_session()
+
+        if api_response.success:
             self.run_state = RunState.START
             self.connector.start()
         else:
-            logging.error("Failed to start a mowing session")
+            logging.error(f"Failed to start a session: Status Code - {api_response.status_code}")
 
     def _stop_action(self):
         """
@@ -174,10 +175,12 @@ class CommandHandler:
         if self.run_state == RunState.STOP:
             logging.debug("Run state is already STOP")
             return
+        
+        api_response = self.api_client.stop_mowing_session()
 
-        if self.api_client.stop_mowing_session():
+        if api_response.success:
             self.run_state = RunState.STOP
             self.driving_mode = DrivingMode.AUTO
             self.connector.stop()
         else:
-            logging.error("Failed to stop a mowing session")
+            logging.error(f"Failed to stop a session: Status Code - {api_response.status_code}")
