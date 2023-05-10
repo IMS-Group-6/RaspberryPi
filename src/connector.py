@@ -85,7 +85,6 @@ class Connector:
 
     def left(self):
         self.send_command("a")
-        print('Left function')
 
     def right(self):
         self.send_command("d")
