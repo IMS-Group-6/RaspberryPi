@@ -94,4 +94,4 @@ class Connector:
         self.send_command("x")
 
     def drive_autonomously(self):
-        self.send_command("t")
+        self.send_command("m")
