@@ -1,9 +1,4 @@
 # In terminal write pip install -r requirements.txt
 pyserial
 picamera
-websocket-client
 python-socketio[asyncio_client]
-uvicorn
-uvicorn[standard]
-websockets
-wsproto
