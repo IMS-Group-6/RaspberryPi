@@ -1,4 +1,5 @@
 import math
+from map import Map
 
 
 class Odemetry:
@@ -12,6 +13,13 @@ class Odemetry:
         self.x = 0
         self.y = 0
         self.theta = 0
+        self.map = Map()
+
+    '''
+    Note down the current coordinates on the map
+    '''
+    def border(self):
+        self.map.addPoint(self.x, self.y)
 
     '''
     Solves odometry
