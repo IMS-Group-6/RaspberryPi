@@ -6,7 +6,6 @@ import json
 import threading
 
 # File imports
-from connector import Connector
 from odometry import Odemetry
 from module.Camera import Camera
 from connections.api_client import APIClient
