@@ -1,0 +1,20 @@
+[serial]
+port = "/dev/ttyUSB0"
+baudrate = 115200
+timeout = 1
+
+[networking]
+server_url = "http://34.173.248.99" # "http://localhost:8080"
+odometry_post_rate = 1.0 # seconds
+
+[odometry]
+differential_width = 217 # milimetres
+wheel_radius = 40 # milimetres
+
+[camera]
+resolution_width = 1024
+resolution_height = 768
+capture_delay = 2
+
+[logging]
+loglevel = "DEBUG"
