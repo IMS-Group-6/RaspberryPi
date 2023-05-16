@@ -5,12 +5,26 @@ class Map:
         self.points = []
         self.hullPoints = []
         self.Point = namedtuple("Point", "x y")
+        self.pointToSend = 0
 
     '''
     Add a point to the map
     '''
     def addPoint(self, x, y):
         self.points.append(self.Point(x, y))
+
+    '''
+    Return the next point to be sent to the backend 
+    (   
+        I would rather just send the whole damn thing to be honest,
+        What if in the case the boundery extends? There is no mechanism to reset the boundary.
+        Its only a handful of bytes!
+    )
+    '''
+    def getNextPoint(self):
+        if len(self.hullPoints) - 1 < self.pointToSend:
+            self.pointToSend += 1
+        return self.hullPoints[self.pointToSend - 1]
 
     '''
     Deterine if a triplet of points are colinear, clockwise, or anticlockwise

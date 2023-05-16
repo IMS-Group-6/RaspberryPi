@@ -15,7 +15,6 @@ def main():
     
     odom = Odemetry()
 
-    # camera = Camera()
     camera = Camera()
 
     if con.connected:
@@ -26,11 +25,14 @@ def main():
             match data:
                 case "CAPTURE":
                     print('Object detected! Capturing Image...')
-                    camera.capture("test-image.jpg")
+                    camera.capture("image.jpg")
+                    api_client.post_obstacle(odom.x, odom.y, "image.jpg")
                 case "ENCODER":
                     odom.solve(con.l, con.r)
                 case "BORDER":
                     odom.border()
+                    point = odom.map.getNextPoint()
+                    api_client.post_boundary(point.x, point.y)
                 case _:
                     pass
 
