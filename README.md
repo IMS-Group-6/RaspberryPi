@@ -45,7 +45,7 @@ To run the main program, execute the main.py script. This will start listening f
 python3 main.py
 ```
 
-If you want to run the system with mock components for testing, you can run the main_mock.py script.
+If you want to run the system with mock components for testing, you can run the test.py script.
 
 ```
 python3 test.py
