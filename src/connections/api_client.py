@@ -2,6 +2,7 @@ import requests
 import logging
 from src.connections.base.base_api_client import ApiResponse, BaseAPIClient
 
+
 class APIClient(BaseAPIClient):
     def ping(self):
         try:

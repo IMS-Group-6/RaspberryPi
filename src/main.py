@@ -11,7 +11,7 @@ from connections.connector import Connector
 from command_handler import CommandHandler
 
 def main():
-    global api_client, con
+    global api_client, con, odom
     
     odom = Odemetry()
 
@@ -35,6 +35,18 @@ def main():
                     pass
 
 
+async def odometry_poster():
+    while True:
+        api_client.post_position(odom.x, odom.y)
+        await asyncio.sleep(0.5)
+
+
+async def main_async():
+    await asyncio.gather(
+        command_handler.listen(),
+        odometry_poster()
+    )
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
 
@@ -47,7 +59,7 @@ if __name__ == "__main__":
     t.start()
 
     try:
-        asyncio.run(command_handler.listen())
+        asyncio.run(main_async())
     except asyncio.exceptions.CancelledError:
         logging.info("Keyboard interrupt received, stopping...")
         if (con.connected):
