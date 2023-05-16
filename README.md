@@ -4,15 +4,15 @@ This project controls an autonomous lawn mower via a Raspberry Pi. The mower can
 
 ## Installation Requirements
 
-Hardware:
+**Hardware**:
 
 - Raspberry Pi
 - mbot ranger (configured to work with Raspberry Pi)
 - PiCamera
 
-Software:
+**Software**:
 
-- Python 3.9+, aiohttp, socketio, requests, picamera, and pyserial Python libraries.
+- `Python 3.9+, aiohttp, socketio, requests, picamera, and pyserial Python libraries.`
 
 ## Setup and Installation
 
@@ -48,7 +48,7 @@ python3 main.py
 If you want to run the system with mock components for testing, you can run the main_mock.py script.
 
 ```
-python3 main_mock.py
+python3 test.py
 ```
 
 The lawn mower will now connect to your server and can be controlled via the server.
