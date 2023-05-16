@@ -7,6 +7,10 @@ class BaseConnector(ABC):
         "Y": 0.0,
         "Z": 0.0,
     }
+    lastPosL = 0
+    lastPosR = 0
+    l = 0
+    r = 0
 
     def __new__(cls):
         if cls._instance is None:

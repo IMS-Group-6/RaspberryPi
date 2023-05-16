@@ -1,7 +1,7 @@
 import serial
 import time
 import logging
-from connections.base.base_connector import BaseConnector
+from src.connections.base.base_connector import BaseConnector
 
 class Connector(BaseConnector):
     def _configure_serial_connection(self):
@@ -30,38 +30,60 @@ class Connector(BaseConnector):
         line = self.serialConnection.readline().decode("utf-8").strip()
         if line:
             logging.debug(line)
-        return line
 
-    def write_data(self, data):
-        self.serialConnection.write(data.encode('utf-8'))
+        match line.split(',')[0].strip():
+            case "CAPTURE":
+                return line
+            case "ENCODER":
+                self.parse_encoder(line)
+                return "ENCODER"
+            case "GYRO":
+                self.parse_gyro(line)
+                return "GYRO"
+            case _:
+                return line
+
+    def parse_encoder(self, line):
+        if line != ['']:
+            data = list(map(int, line))
+            self.l = data[1] - self.lastPosL
+            self.r = data[2] - self.lastPosR
+            self.lastPosL = data[1]
+            self.lastPosR = data[2]
+
+    def parse_gyro(self, line):
+        pass
 
     def get_gyro_data(self):
         return self.gyro
+
+    def write_data(self, data):
+        self.serialConnection.write(data.encode('utf-8'))
 
     def send_command(self, cmd):
         self.write_data(cmd)
         time.sleep(0.2)
 
     def forward(self):
-        self.send_command("w")
+        self.write_data("w")
 
     def backward(self):
-        self.send_command("s")
+        self.write_data("s")
 
     def left(self):
         self.send_command("a")
 
     def right(self):
-        self.send_command("d")
+        self.write_data("d")
     
     def start(self):
-        self.send_command("z")
+        self.write_data("z")
 
     def stop(self):
-        self.send_command("x")
+        self.write_data("x")
 
     def drive_autonomously(self):
-        self.send_command("t")
+        self.write_data("t")
 
     def drive_manually(self):
-        self.send_command("m")
+        self.write_data("m")

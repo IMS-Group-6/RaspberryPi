@@ -4,18 +4,17 @@ import asyncio
 import threading
 
 # File imports
+from odometry import Odemetry
 from module.Camera import Camera
 from connections.api_client import APIClient
 from connections.connector import Connector
 from command_handler import CommandHandler
 
-from connector import Connector # You should remove this file and modify connections.connector and connections.base.connector
-from odometry import Odemetry
-
 def main():
-    global api_client, con
+    global api_client, con, odom
     
     odom = Odemetry()
+
     camera = Camera()
 
     if con.connected:
@@ -26,12 +25,29 @@ def main():
             match data:
                 case "CAPTURE":
                     print('Object detected! Capturing Image...')
-                    camera.capture("test-image.jpg")
+                    camera.capture("image.jpg")
+                    api_client.post_obstacle(odom.x, odom.y, "image.jpg")
                 case "ENCODER":
                     odom.solve(con.l, con.r)
+                case "BORDER":
+                    odom.border()
+                    point = odom.map.getNextPoint()
+                    api_client.post_boundary(point.x, point.y)
                 case _:
                     pass
 
+
+async def odometry_poster():
+    while True:
+        api_client.post_position(odom.x, odom.y)
+        await asyncio.sleep(0.5)
+
+
+async def main_async():
+    await asyncio.gather(
+        command_handler.listen(),
+        odometry_poster()
+    )
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
@@ -45,7 +61,7 @@ if __name__ == "__main__":
     t.start()
 
     try:
-        asyncio.run(command_handler.listen())
+        asyncio.run(main_async())
     except asyncio.exceptions.CancelledError:
         logging.info("Keyboard interrupt received, stopping...")
         if (con.connected):
