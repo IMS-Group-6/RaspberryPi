@@ -1,6 +1,7 @@
 import requests
 import logging
-from src.connections.base.base_api_client import ApiResponse, BaseAPIClient
+#from src.connections.base.base_api_client import ApiResponse, BaseAPIClient
+from .base.base_api_client import ApiResponse, BaseAPIClient
 
 
 class APIClient(BaseAPIClient):

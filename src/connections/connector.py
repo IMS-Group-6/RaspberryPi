@@ -1,7 +1,7 @@
 import serial
 import time
 import logging
-from src.connections.base.base_connector import BaseConnector
+from .base.base_connector import BaseConnector
 
 class Connector(BaseConnector):
     def _configure_serial_connection(self):
