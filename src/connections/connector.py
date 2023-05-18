@@ -58,6 +58,7 @@ class Connector(BaseConnector):
         return self.gyro
 
     def write_data(self, data):
+        print("WRITING {}".format(data))
         self.serialConnection.write(data.encode('utf-8'))
 
     def send_command(self, cmd):

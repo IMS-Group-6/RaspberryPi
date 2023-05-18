@@ -180,7 +180,6 @@ class CommandHandler:
 
         if api_response.success:
             self.run_state = RunState.STOP
-            self.driving_mode = DrivingMode.AUTO
             self.connector.stop()
         else:
             logging.error(f"Failed to stop a session: Status Code - {api_response.status_code}")

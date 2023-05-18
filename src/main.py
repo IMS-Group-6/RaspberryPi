@@ -46,7 +46,7 @@ async def odometry_poster():
 async def main_async():
     await asyncio.gather(
         command_handler.listen(),
-        odometry_poster()
+        #odometry_poster()
     )
 
 if __name__ == "__main__":
