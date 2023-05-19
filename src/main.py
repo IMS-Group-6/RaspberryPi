@@ -38,9 +38,9 @@ def main():
 
 
 async def odometry_poster():
-    while True:
+    while con.connected:
         api_client.post_position(odom.x, odom.y)
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1)
 
 
 async def main_async():
