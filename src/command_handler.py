@@ -22,6 +22,7 @@ class CommandHandler:
         # Keep track of different operations
         self.driving_mode = DrivingMode.AUTO
         self.run_state = RunState.STOP
+        #self.session_started = False
 
     async def listen(self):
         """
@@ -158,6 +159,7 @@ class CommandHandler:
 
         if api_response.success:
             self.run_state = RunState.START
+            self.session_started = True
             self.connector.start()
         else:
             logging.error(f"Failed to start a session: Status Code - {api_response.status_code}")
@@ -180,6 +182,7 @@ class CommandHandler:
 
         if api_response.success:
             self.run_state = RunState.STOP
+            #self.session_started = False
             self.connector.stop()
         else:
             logging.error(f"Failed to stop a session: Status Code - {api_response.status_code}")

@@ -5,7 +5,7 @@ import threading
 
 # File imports
 from odometry import Odemetry
-from module.Camera import Camera
+#from module.Camera import Camera
 from connections.api_client import APIClient
 from connections.connector import Connector
 from command_handler import CommandHandler
@@ -15,7 +15,7 @@ def main():
     
     odom = Odemetry()
 
-    camera = Camera()
+  #  camera = Camera()
 
     if con.connected:
         while True:
@@ -38,9 +38,22 @@ def main():
 
 
 async def odometry_poster():
-    while con.connected:
-        api_client.post_position(odom.x, odom.y)
-        await asyncio.sleep(1)
+    while command_handler.session_started:
+        print("Session has started")
+        # api_client.post_position(odom.x, odom.y)
+        # await asyncio.sleep(10)
+        # api_client.post_boundary(10, 12)
+        # await asyncio.sleep(10)
+        # api_client.post_boundary(20, 34)
+        # await asyncio.sleep(10)
+        # api_client.post_boundary(20, 120)
+        # await asyncio.sleep(10)
+        # api_client.post_boundary(60, 140)
+        # await asyncio.sleep(10)
+        # api_client.post_boundary(80, 90)
+
+
+
 
 
 async def main_async():
