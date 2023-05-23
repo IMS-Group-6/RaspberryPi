@@ -5,16 +5,27 @@ from enum import Enum
 import json
 import logging
 
+# The class defines an enumeration of two driving modes, "AUTO" and "MANUAL".
+
+
 class DrivingMode(Enum):
     AUTO = 1
     MANUAL = 2
+
+# The class defines an enumeration of two states, "START" and "STOP", representing the run state of a
+# program.
+
 
 class RunState(Enum):
     START = 1
     STOP = 2
 
+
 class CommandHandler:
     def __init__(self, api_client, connector):
+        """
+        This is a constructor function that initializes various attributes of an object.
+        """
         self.sio_client = SocketIOClient()
         self.api_client: BaseAPIClient = api_client
         self.connector: BaseConnector = connector
@@ -93,7 +104,7 @@ class CommandHandler:
             if self.driving_mode == DrivingMode.AUTO:
                 logging.debug("Driving mode is already AUTO")
                 return
-            
+
             self.driving_mode = DrivingMode.AUTO
             self.connector.drive_autonomously()
 
@@ -101,7 +112,7 @@ class CommandHandler:
             if self.driving_mode == DrivingMode.MANUAL:
                 logging.debug("Driving mode is already MANUAL")
                 return
-            
+
             self.driving_mode = DrivingMode.MANUAL
             self.connector.drive_manually()
         else:
@@ -120,11 +131,12 @@ class CommandHandler:
         action = event_data.get("action")
         logging.debug(f"action: {action}")
 
-        if (action in ("forward", "backward", "left", "right") and 
-            (self.run_state != RunState.START or self.driving_mode != DrivingMode.MANUAL)):
-                logging.debug("Mower must be in START state and in MANUAL driving mode")
-                return
-        
+        if (action in ("forward", "backward", "left", "right") and
+                (self.run_state != RunState.START or self.driving_mode != DrivingMode.MANUAL)):
+            logging.debug(
+                "Mower must be in START state and in MANUAL driving mode")
+            return
+
         if action == "forward":
             self.connector.forward()
         elif action == "backward":
@@ -160,7 +172,8 @@ class CommandHandler:
             self.run_state = RunState.START
             self.connector.start()
         else:
-            logging.error(f"Failed to start a session: Status Code - {api_response.status_code}")
+            logging.error(
+                f"Failed to start a session: Status Code - {api_response.status_code}")
 
     def _stop_action(self):
         """
@@ -175,12 +188,12 @@ class CommandHandler:
         if self.run_state == RunState.STOP:
             logging.debug("Run state is already STOP")
             return
-        
+
         api_response = self.api_client.stop_mowing_session()
 
         if api_response.success:
             self.run_state = RunState.STOP
-            self.driving_mode = DrivingMode.AUTO
             self.connector.stop()
         else:
-            logging.error(f"Failed to stop a session: Status Code - {api_response.status_code}")
+            logging.error(
+                f"Failed to stop a session: Status Code - {api_response.status_code}")

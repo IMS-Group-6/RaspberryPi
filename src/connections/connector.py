@@ -47,6 +47,7 @@ class Connector(BaseConnector):
         returns "ENCODER". If it starts with "GYRO", it calls the parse_gyro method and returns "GYRO". If
         it doesn't match any of these cases it returns line.
         """
+
         try:
             line = self.serialConnection.readline().decode("utf-8").strip()
         except:

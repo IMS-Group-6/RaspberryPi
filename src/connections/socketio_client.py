@@ -4,8 +4,13 @@ import aiohttp
 import config
 import asyncio
 
+
 class SocketIOClient:
     def __init__(self):
+        """
+        This is a constructor function that initializes a socketio client with event listeners for
+        'connect' and 'reconnect'.
+        """
         self.sio = socketio.AsyncClient(
             reconnection=True,
             reconnection_delay=5

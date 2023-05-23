@@ -20,7 +20,7 @@ This project controls an autonomous lawn mower via a Raspberry Pi. The mower can
 - Install the necessary Python libraries using pip:
 
 ```
-pip install aiohttp python-socketio requests picamera pyserial
+pip install -r requirements.txt
 ```
 
 - Configure your Raspberry Pi to connect with your lawn mower.
@@ -33,6 +33,7 @@ The main components of this project are:
 - **command_handler.py**: Listens for commands from the API and executes them using the Connector class.
 - **api_client.py**: Handles communication with the API.
 - **connector.py**: Manages the serial connection with the Arduino and sends/receives data.
+- **map.py**: Manages a set of 2D points, performs geometric calculations, and transmits the points to the backend.
 - **odometry.py**: Uses encoder data to calculate the position of the robot.
 - **Camera.py**: Captures images using the robot's camera.
 - **mock_connector.py and mock_api_client.py**: Mock classes for testing the system without a physical robot or an API.

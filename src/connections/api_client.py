@@ -71,7 +71,7 @@ class APIClient(BaseAPIClient):
             response = requests.post(url, data=coordinates)
             status_code = response.status_code
             content = response.content
-            logging.DEBUG(content)
+
             return ApiResponse(status_code == 201, status_code)
         except Exception as e:
             logging.error(e)
@@ -109,7 +109,6 @@ class APIClient(BaseAPIClient):
                 url, data=coordinates, files=captured_image)
             status_code = response.status_code
             content = response.content
-            logging.DEBUG(content)
 
             return ApiResponse(status_code == 201, status_code)
         except Exception as e:
