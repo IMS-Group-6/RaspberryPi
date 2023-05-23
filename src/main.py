@@ -2,6 +2,7 @@
 import logging
 import asyncio
 import threading
+from datetime import datetime
 
 # File imports
 from odometry import Odemetry
@@ -10,9 +11,10 @@ from connections.api_client import APIClient
 from connections.connector import Connector
 from command_handler import CommandHandler
 
+
 def main():
     global api_client, con, odom
-    
+
     odom = Odemetry()
 
     camera = Camera()
@@ -29,18 +31,18 @@ def main():
                     api_client.post_obstacle(odom.x, odom.y, "image.jpg")
                 case "ENCODER":
                     odom.solve(con.l, con.r)
-                case "BORDER":
-                    odom.border()
-                    point = odom.map.getNextPoint()
-                    api_client.post_boundary(point.x, point.y)
+                # case "BORDER":
+                #    odom.border()
+                #    point = odom.map.getNextPoint()
+                #    api_client.post_boundary(point.x, point.y)
                 case _:
                     pass
 
 
 async def odometry_poster():
-    while True:
+    while con.connected:
         api_client.post_position(odom.x, odom.y)
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(1)
 
 
 async def main_async():
@@ -48,6 +50,7 @@ async def main_async():
         command_handler.listen(),
         odometry_poster()
     )
+
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
@@ -65,16 +68,17 @@ if __name__ == "__main__":
     except asyncio.exceptions.CancelledError:
         logging.info("Keyboard interrupt received, stopping...")
         if (con.connected):
-            
+
             # Stops an active session before program termination
             api_response = api_client.stop_mowing_session()
 
             if api_response.success:
                 print(f"Stopped an active session before program termination, status code: {api_response.status_code}")
             elif not api_response.success and api_response.status_code == 400:
-                print(f"No active session was found before program termination, status code: {api_response.status_code}")
+                print(
+                    f"No active session was found before program termination, status code: {api_response.status_code}")
             else:
                 print(f"Failed to stop session, status code: {api_response.status_code}")
-            
+
             con.stop()
             con.close()
