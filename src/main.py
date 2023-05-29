@@ -27,6 +27,7 @@ def main():
 
             match data:
                 case "CAPTURE":
+                    print("Collision... Capturing Image")
                     camera.capture("image.jpg")
                     api_client.post_obstacle(odom.x, odom.y, "image.jpg")
                     os.remove("image.jpg")
