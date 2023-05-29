@@ -28,8 +28,8 @@ def main():
             match data:
                 case "CAPTURE":
                     print("Collision... Capturing Image")
-                    image = camera.capture("image.jpg")
-                    api_client.post_obstacle(odom.x, odom.y, image)
+                    camera.capture("image.jpg")
+                    api_client.post_obstacle(odom.x, odom.y, "image.jpg")
                     # os.remove("image.jpg")
                 case "ENCODER":
                     odom.solve(con.l, con.r)
