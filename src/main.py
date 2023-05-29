@@ -3,6 +3,7 @@ import logging
 import asyncio
 import threading
 from datetime import datetime
+import os
 
 # File imports
 from odometry import Odemetry
@@ -26,9 +27,9 @@ def main():
 
             match data:
                 case "CAPTURE":
-                    print('Object detected! Capturing Image...')
                     camera.capture("image.jpg")
                     api_client.post_obstacle(odom.x, odom.y, "image.jpg")
+                    os.remove("image.jpg")
                 case "ENCODER":
                     odom.solve(con.l, con.r)
                 # case "BORDER":
