@@ -30,7 +30,7 @@ def main():
                     print("Collision... Capturing Image")
                     image = camera.capture("image.jpg")
                     api_client.post_obstacle(odom.x, odom.y, image)
-                    os.remove("image.jpg")
+                    # os.remove("image.jpg")
                 case "ENCODER":
                     odom.solve(con.l, con.r)
                 # case "BORDER":
